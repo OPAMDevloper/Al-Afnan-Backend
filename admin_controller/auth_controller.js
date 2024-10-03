@@ -3,29 +3,24 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { saveImage } = require('../helpers/fileUploadHelper');
+const { saveImages } = require('../helpers/fileUploadHelper');
+const ErrorRespnse = require('../response/error_response');
+const api = require('../config/api');
+const ApiResponse = require('../response/ApiResponse');
 
 
 const AuthController = {
 
     async create_user(req, res, next) {
 
-        console.log(req.body);
-        console.log(req.file);
-
 
         if (!req.body.password || !req.body.email || !req.body.username) {
-            return res.status(400).json({ message: 'All fields are required' })
+            return res.status(400).json(new ErrorRespnse(400, 'All fields are required'))
         }
         let imagePath = null;
-        if (req.file) {
-            imagePath = await saveImage(req.file);
+        if (req.files) {
+            imagePath = await saveImages(req.file);
         }
-
-
-        console.log('imagePath', imagePath);
-
-
 
         const newUser = new User({
             username: req.body.username,
@@ -34,56 +29,40 @@ const AuthController = {
             profileImage: imagePath
         })
 
-
         try {
             const user = await newUser.save();
-            res.status(201).json({
-                type: 'success',
-                message: "User has been created successfuly",
-                user
-            })
+            res.status(201).json(new ApiResponse(201, 'User has been created successfuly', user))
         } catch (err) {
-            res.status(500).json({
-                type: "error",
-                message: "Something went wrong please try again",
-                err
-            })
+
+
+            res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', err.message))
         }
     },
 
 
     async login_user(req, res, next) {
         if (!req.body.email || !req.body.password) {
-            return res.status(400).json({ message: 'All fields are required' })
+            return res.status(400).json(new ErrorRespnse(400, 'All fields are required'))
         }
         try {
+
+            console.log(process.env.STRIPE_KEY)
 
             const user = await User.findOne({ email: req.body.email })
 
             if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
-                res.status(500).json({
-                    type: "error",
-                    message: "User not exists or invalid credentials",
-                })
+                res.status(500).json(new ErrorRespnse(500, 'User not exists or invalid credentials'))
             } else {
                 const accessToken = jwt.sign({
                     id: user._id,
                     email: user.email
-                }, process.env.JWT_SECRET, { expiresIn: "1d" })
+                }, 'secret', { expiresIn: "1d" })
                 const { password, ...data } = user._doc
-                res.status(200).json({
-                    type: "success",
-                    message: "Successfully logged",
-                    ...data,
-                    accessToken
-                })
+                res.status(200).json(new ApiResponse(200, 'Successfully logged', { ...data, accessToken }))
             }
         } catch (err) {
-            res.status(500).json({
-                type: "error",
-                message: "Something went wrong please try again",
-                err
-            })
+            console.log(err)
+            res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', err))
         }
     }
 

@@ -1,44 +1,28 @@
-const jwt =require('jsonwebtoken')
-
-const api_config = require("../config/api.js");
+const jwt = require('jsonwebtoken');
+const ErrorRespnse = require('../response/error_response.js');
 
 /* jwt token verify */
-const authenticationVerifier = (req, res, next)=> {
-
-    const authHeader = req.headers.token;
-
+const authenticationVerifier = (req, res, next) => {
+    // Access the Authorization header
+    const authHeader = req.headers.authorization; // Change this to 'authorization'
+    console.log('authjheader', authHeader);
     if (authHeader) {
-        const token = authHeader.split(' ')[1];
-        jwt.verify(token, api_config.api.jwt_secret,(err, user)=>{
-            if(err) res.status(401).json("Invalid token");
-            req.user = user;
-            next()
-        })
+        // Split the header to get the token
+        const token = authHeader.split(' ')[1]; // This assumes the format is "Bearer <token>"
+
+        if (!token) {
+            return res.status(401).json(new ErrorRespnse(401, 'Token not found'));
+        }
+
+        // Verify the token using the secret from environment variables
+        jwt.verify(token, 'secret', (err, user) => {
+            if (err) return res.status(401).json(new ErrorRespnse(401, 'Invalid token'));
+            req.user = user; // Attach the user to the request object
+            next(); // Call the next middleware or route handler
+        });
     } else {
-        return res.status(401).json("You are not authenticated");
+        return res.status(401).json(new ErrorRespnse(401, 'You are not authenticated'));
     }
 }
 
-/* check if the current user */
-const accessLevelVerifier = (req, res, next) => {
-    authenticationVerifier(req,res, ()=>{
-        if(req.user.id === req.params.id || req.user.isAdmin) {
-            next()
-        } else {
-            res.status(403).json("You are not allowed to perform this task");
-        }
-    })
-}
-
-/* access_level_verifier('admin') */
-const isAdminVerifier = (req, res, next) => {
-    authenticationVerifier(req, res, ()=> {
-        if(req.user.isAdmin) {
-            next();
-        } else {
-            res.status(403).json("You are not allowed to perform this task")
-        }
-    })
-}
-
-module.exports = { authenticationVerifier, accessLevelVerifier, isAdminVerifier };
+module.exports = { authenticationVerifier };

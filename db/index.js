@@ -4,7 +4,7 @@ const dbname = require('../db/index.js')
 
 const connectDB = async () => {
     try {
-        const connectoinInstance = await mongoose.connect('mongodb+srv://swapnilkag143214:143214@cluster0.1lyzqxu.mongodb.net/' + 'tictactoe');
+        const connectoinInstance = await mongoose.connect('mongodb+srv://swapnilkag143214:143214@cluster0.1lyzqxu.mongodb.net/' + 'E-commerce');
         console.log('mongoose connected successfully');
 
     } catch (e) {

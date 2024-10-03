@@ -36,8 +36,10 @@ app.use((req, res, next) => {
 const fronted_route = require('./frontend_route/auth_route');
 app.use('/', fronted_route);
 
+const product_route = require('./admin_routes/product_route');
 const admin_route = require('./admin_routes/auth_route');
 app.use('/admin', admin_route);
+app.use('/admin/product', product_route);
 
 
 
