@@ -1,6 +1,6 @@
 
 
-const User = require('../models/User');
+const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { saveImages } = require('../helpers/fileUploadHelper');
@@ -22,7 +22,7 @@ const AuthController = {
             imagePath = await saveImages(req.file);
         }
 
-        const newUser = new User({
+        const newUser = new Admin({
             username: req.body.username,
             email: req.body.email,
             password: bcrypt.hashSync(req.body.password, 10),
@@ -40,25 +40,30 @@ const AuthController = {
     },
 
 
-    async login_user(req, res, next) {
+    async   login_user(req, res, next) {
         if (!req.body.email || !req.body.password) {
             return res.status(400).json(new ErrorRespnse(400, 'All fields are required'))
         }
         try {
 
-            console.log(process.env.STRIPE_KEY)
+            console.log('body', req.body);
+            
 
-            const user = await User.findOne({ email: req.body.email })
+            const user = await Admin.findOne({ email: req.body.email })
+            if(!user) {
+                return res.status(400).json(new ErrorRespnse(400, 'user not exists'))
+            }
 
             if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
-                res.status(500).json(new ErrorRespnse(500, 'User not exists or invalid credentials'))
+                
+                return  res.status(400).json(new ErrorRespnse(400, 'Invalid credentials'))
             } else {
                 const accessToken = jwt.sign({
                     id: user._id,
                     email: user.email
                 }, 'secret', { expiresIn: "1d" })
                 const { password, ...data } = user._doc
-                res.status(200).json(new ApiResponse(200, 'Successfully logged', { ...data, accessToken }))
+               return  res.status(200).json(new ApiResponse(200, 'Successfully logged', { ...data, accessToken }))
             }
         } catch (err) {
             console.log(err)

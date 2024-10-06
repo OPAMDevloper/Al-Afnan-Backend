@@ -1,11 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
+const cors = require('cors');
 const path = require('path');
 const connectDB = require('./db');
 const app = express();
 
+const corsOptions = {
+    origin: 'http://localhost:3039', // Replace with your frontend origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+};
+
+app.use(cors(corsOptions));
 /* configure body-parser */// Middleware
 app.use(express.json()); // For parsing application/json
 // app.use(express.urlencoded({ extended: true }));
@@ -33,13 +40,20 @@ app.use((req, res, next) => {
     next();
 });
 
+const frontendProductRoute = require('./frontend_route/product_route');
 const fronted_route = require('./frontend_route/auth_route');
-app.use('/', fronted_route);
+app.use('/auth', fronted_route);
+app.use('/product', frontendProductRoute);
+app.use('/order', require('./frontend_route/orders_route'));
+
 
 const product_route = require('./admin_routes/product_route');
 const admin_route = require('./admin_routes/auth_route');
-app.use('/admin', admin_route);
-app.use('/admin/product', product_route);
+const customer_route = require('./admin_routes/customer_route');
+app.use('/admin/auth', admin_route);
+app.use('/admin/product', product_route);   
+app.use('/admin/customer', customer_route);
+
 
 
 

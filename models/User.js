@@ -18,6 +18,15 @@ const UserSchema = new mongoose.Schema({
     profileImage: {
         type: String,
         default: ""
+    },
+    deletedAt: {
+        type: Date,
+        default: null
+    },
+    status: {
+        type: String,
+        enum: ["active", "inactive"],
+        default: "active"
     }
 },
     { timestamps: true }
