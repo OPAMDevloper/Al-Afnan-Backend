@@ -7,5 +7,5 @@ const   router = express.Router();
 
 // router.get('/show/:id', ProductController.());
 router.get('/all', ProductController.getAll);
-router.get('/show/:id', ProductController.showAll);
+router.get('/show/:id', ProductController.showAll); 
 module.exports = router;

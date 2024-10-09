@@ -12,9 +12,11 @@ router.get('/show/:id', authenticationVerifier, adminController.getById);
 
 
 // add route for trash and delete and restore
-router.post('/trash/:id', authenticationVerifier, adminController.trash);
+router.post('/trash-many', authenticationVerifier, adminController.trashMany);
+router.post('/restore-many', authenticationVerifier, adminController.restoreMany);
+router.delete('/delete-many', authenticationVerifier, adminController.deleteMany);
+
 router.get('/show/trash/all', authenticationVerifier, adminController.getTrash);
-router.delete('/delete/:id', authenticationVerifier, adminController.delete);
 // router.put('/restore/:id', authenticationVerifier, adminController.restore);
 
 // router.post('/create', upload.single('profileImage'), authenticationVerifier, adminController.add);

@@ -34,16 +34,13 @@ const CustomerController = {
         }
     },
 
-    async trash(req, res, next) {
+    async trashMany(req, res, next) {
         try {
-            if(req.params.id === undefined) {
+            if(req.body.ids === undefined && req.body.ids.length === 0) {
                 return res.status(400).json(new ErrorRespnse(400, 'Customer id is required'));
             }
-
-            const customer = await User.findById(req.params.id);
-            customer.deletedAt = Date.now();
-            await customer.save();
-            res.status(200).json(new ApiResponse(200, 'Customer fetched successfully', customer));
+            const customers = await User.updateMany({ _id: { $in: req.body.ids } }, { deletedAt: Date.now() });
+            res.status(200).json(new ApiResponse(200, 'Customers deleted successfully', customers));
         } catch (error) {
             res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
         }
@@ -65,26 +62,31 @@ const CustomerController = {
         }
     },  
 
-    async delete(req, res, next) {
+    async deleteMany(req, res, next) {
         try {
-            if(req.params.id === undefined) {
+            if(req.body.ids === undefined && req.body.ids.length === 0) {
                 return res.status(400).json(new ErrorRespnse(400, 'Customer id is required'));
             }
-            const customer = await User.findByIdAndDelete(req.params.id);
+
+            console.log('req.body.ids', req.body.ids);
+            
+
+            const customer = await User.findByIdAndDelete(  req.body.ids  );
+
             res.status(200).json(new ApiResponse(200, 'Customer deleted successfully', customer));
         } catch (error) {
+            console.log('error', error);
+            
             res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
         }
     },
-    async restore(req, res, next) {
+    async restoreMany(req, res, next) {
         try {
-            if(req.params.id === undefined) {
+            if(req.body.ids === undefined && req.body.ids.length === 0) {
                 return res.status(400).json(new ErrorRespnse(400, 'Customer id is required'));
             }
-            const customer = await User.findById(req.params.id);
-            customer.deletedAt = null;
-            await customer.save();
-            res.status(200).json(new ApiResponse(200, 'Customer fetched successfully', customer));
+            const customers = await User.updateMany({ _id: { $in: req.body.ids } }, { deletedAt: null });
+            res.status(200).json(new ApiResponse(200, 'Customers restored successfully', customers));
         } catch (error) {
             res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
         }
