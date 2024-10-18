@@ -5,7 +5,6 @@ const cors = require('cors');
 const path = require('path');
 const connectDB = require('./db');
 const app = express();
-
 const corsOptions = {
     origin: 'http://localhost:3039', // Replace with your frontend origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -13,25 +12,13 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-/* configure body-parser */// Middleware
 app.use(express.json()); // For parsing application/json
-// app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
-
-
-// app.use('/public', express.static(path.join(__dirname, 'public'))); // Serve static files
-
-
+/* configure body-parser */// Middleware
+app.use(bodyParser.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
-// const { auth_route, user_route, product_route, cart_route, order_route } = require('./routes');
-
-// app.use('/api/v1/auth', auth_route);
-// app.use('/api/v1/users', user_route);
-// app.use('/api/v1/products', product_route);
-// app.use('/api/v1/carts', cart_route);
-// app.use('/api/v1/orders', order_route);
 
 
 //log requested url
@@ -51,8 +38,9 @@ const product_route = require('./admin_routes/product_route');
 const admin_route = require('./admin_routes/auth_route');
 const customer_route = require('./admin_routes/customer_route');
 app.use('/admin/auth', admin_route);
-app.use('/admin/product', product_route);   
+app.use('/admin/product', product_route);
 app.use('/admin/customer', customer_route);
+app.use('/admin/category', require('./admin_routes/category_route'))
 
 
 

@@ -6,10 +6,12 @@ const { authenticationVerifier } = require('../middlewares/verifyToken');
 const multer = require('multer');
 // const storage = multer.memoryStorage(); 
 const upload = multer({ storage: multer.memoryStorage() });
- 
+
 router.get('/all', authenticationVerifier, adminController.getAll);
 router.get('/show/:id', authenticationVerifier, adminController.getById);
 
+router.post('/create', upload.single('profileImage'), authenticationVerifier, adminController.create);
+router.post('/update/:id', upload.single('profileImage'), authenticationVerifier, adminController.update);
 
 // add route for trash and delete and restore
 router.post('/trash-many', authenticationVerifier, adminController.trashMany);

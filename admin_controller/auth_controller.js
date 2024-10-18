@@ -14,7 +14,7 @@ const AuthController = {
     async create_user(req, res, next) {
 
 
-        if (!req.body.password || !req.body.email || !req.body.username) {
+        if (!req.body.password || !req.body.email || !req.body.name) {
             return res.status(400).json(new ErrorRespnse(400, 'All fields are required'))
         }
         let imagePath = null;
@@ -23,7 +23,7 @@ const AuthController = {
         }
 
         const newUser = new Admin({
-            username: req.body.username,
+            name: req.body.name,
             email: req.body.email,
             password: bcrypt.hashSync(req.body.password, 10),
             profileImage: imagePath
@@ -40,30 +40,30 @@ const AuthController = {
     },
 
 
-    async   login_user(req, res, next) {
+    async login_user(req, res, next) {
         if (!req.body.email || !req.body.password) {
             return res.status(400).json(new ErrorRespnse(400, 'All fields are required'))
         }
         try {
 
             console.log('body', req.body);
-            
+
 
             const user = await Admin.findOne({ email: req.body.email })
-            if(!user) {
+            if (!user) {
                 return res.status(400).json(new ErrorRespnse(400, 'user not exists'))
             }
 
             if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
-                
-                return  res.status(400).json(new ErrorRespnse(400, 'Invalid credentials'))
+
+                return res.status(400).json(new ErrorRespnse(400, 'Invalid credentials'))
             } else {
                 const accessToken = jwt.sign({
                     id: user._id,
                     email: user.email
                 }, 'secret', { expiresIn: "1d" })
                 const { password, ...data } = user._doc
-               return  res.status(200).json(new ApiResponse(200, 'Successfully logged', { ...data, accessToken }))
+                return res.status(200).json(new ApiResponse(200, 'Successfully logged', { ...data, accessToken }))
             }
         } catch (err) {
             console.log(err)

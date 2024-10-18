@@ -1,5 +1,6 @@
 // controllers/adminController.js
 const { saveImages } = require('../helpers/fileUploadHelper');
+const { paginate, configurePagination } = require('../helpers/pagninateHelper');
 const Product = require('../models/Product');
 const ApiResponse = require('../response/ApiResponse');
 const ErrorRespnse = require('../response/error_response');
@@ -7,8 +8,18 @@ const ErrorRespnse = require('../response/error_response');
 // Add a new product
 exports.addProduct = async (req, res) => {
     try {
-        const savedPaths = saveImages(req.files);
-        req.body.images = savedPaths;
+        if (req.files) {
+            const savedPaths = saveImages(req.files.gallery);
+
+            req.body.gallery = savedPaths;
+        }
+
+        if (req.files.image) {
+            const image = saveImages(req.files.image);
+            req.body.image = image[0];
+        }
+
+
         const product = new Product(req.body);
         const data = await product.save();
         // const product = new Product(req.body);
@@ -28,10 +39,18 @@ exports.updateProduct = async (req, res) => {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ message: 'Product not found' });
 
-        Object.assign(product, req.body); // Update product fields
-        await product.save();
-        // res.json();
-        res.status(200).json(new ApiResponse(200, 'Product updated successfully', product));
+
+        if (req.files.image) {
+            const image = saveImages(req.files.image);
+            req.body.image = image[0];
+        }
+        if (req.files.gallery) {
+            const gallery = saveImages(req.files.gallery);
+            req.body.gallery = gallery;
+        }
+
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.status(200).json(new ApiResponse(200, 'Product updated successfully', updatedProduct));
     } catch (error) {
         res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
     }
@@ -58,8 +77,12 @@ exports.deleteProduct = async (req, res) => {
 // Get all products
 exports.getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find();
-        // res.json(products);
+        // const products = await Product.find();
+        const query = {
+            deletedAt: null
+        }
+        const options = configurePagination(req, query);
+        const products = await paginate(Product, options);
         res.status(200).json(new ApiResponse(200, 'Products fetched successfully', products));
     } catch (error) {
         // res.status(500).json({ error: error.message });
