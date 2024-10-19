@@ -3,9 +3,8 @@ const Order = require('../models/Order');
 
 // Create an order
 const createOrder = async (req, res) => {
-    const { userId, products, amount, address } = req.body; // Expecting userId, products, amount, address
+    const { userId, products, amount, address } = req.body;
 
-    // Validate request
     if (!userId || !Array.isArray(products) || products.length === 0 || !amount || !address) {
         return res.status(400).json({ message: 'All fields are required.' });
     }
