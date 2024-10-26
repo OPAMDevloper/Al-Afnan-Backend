@@ -12,10 +12,17 @@ const CustomerController = {
             // get all customers expect trash
             // const customers = await User.find({ deletedAt: null });
             const query = {
-                deletedAt: null
+                // deletedAt: null,
+                // sort: {
+                //     createdAt: -1
+                // }
             }
             const options = configurePagination(req, query);
+            console.log('optionsssss', options);
+
             const customers = await paginate(User, options);
+            console.log('customers ', customers);
+
             return res.status(200).json(new ApiResponse(200, 'Customers fetched successfully', customers));
         } catch (error) {
             console.log('error', error);
@@ -142,6 +149,21 @@ const CustomerController = {
             }
             const customers = await User.updateMany({ _id: { $in: req.body.ids } }, { deletedAt: null });
             res.status(200).json(new ApiResponse(200, 'Customers restored successfully', customers));
+        } catch (error) {
+            res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
+        }
+    },
+
+
+    async updatePassword(req, res, next) {
+        try {
+            if (req.params.id === undefined) {
+                return res.status(400).json(new ErrorRespnse(400, 'Customer id is required'));
+            }
+            const salt = await bcrypt.genSalt(10);
+            const hashPassword = await bcrypt.hash(req.body.password, salt);
+            const customer = await User.findByIdAndUpdate(req.params.id, { password: hashPassword }, { new: true });
+            res.status(200).json(new ApiResponse(200, 'Customer updated successfully', customer));
         } catch (error) {
             res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
         }

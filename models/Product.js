@@ -36,6 +36,12 @@ const productSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    status: {
+        type : String,
+        enum : ['active','inactive'],
+        default : 'active'
+
+    }
 }, {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
 });

@@ -1,15 +1,17 @@
 // paginationHelper.js
 
+const { create } = require("../models/Product");
+
 const paginate = async (model, options) => {
-    const { page = 1, count = 10, filter = {}, sort = {} } = options;
+    const { page = 1, count = 10, filter = {}, sort = { createdAt: -1 } } = options;
 
     // Calculate total documents
     const totalDocuments = await model.countDocuments(filter);
     const totalPages = Math.ceil(totalDocuments / count); // Use count instead of limit
-    
+
     // Find the documents for the current page
     const documents = await model.find(filter)
-        .sort(sort)
+        .sort({ createdAt: -1 })
         .skip((page - 1) * count)
         .limit(count);
 
@@ -53,7 +55,7 @@ const configurePagination = (req, defaultQuery = {}) => {
         page,
         count,
         filter,
-        sort: req.query.sort ? JSON.parse(req.query.sort) : {}, 
+        sort: req.query.sort ? JSON.parse(req.query.sort) : {},
     };
 };
 

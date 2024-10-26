@@ -17,6 +17,7 @@ router.post('/update/:id', upload.single('profileImage'), authenticationVerifier
 router.post('/trash-many', authenticationVerifier, adminController.trashMany);
 router.post('/restore-many', authenticationVerifier, adminController.restoreMany);
 router.delete('/delete-many', authenticationVerifier, adminController.deleteMany);
+router.post('/update-password/:id', authenticationVerifier, adminController.updatePassword);
 
 router.get('/show/trash/all', authenticationVerifier, adminController.getTrash);
 // router.put('/restore/:id', authenticationVerifier, adminController.restore);
