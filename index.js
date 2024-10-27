@@ -102,7 +102,7 @@ connectDB(process.env.MONGODB_URI).then(() => {
     console.log('Error connecting to MongoDB:', err);
 });
 
-app.listen(process.env.PORT, process.env.HOST, () => {
+app.listen(process.env.PORT || 10000, process.env.HOST, () => {
 
     console.log(`Server is listening on port ${process.env.PORT}`);
 });
