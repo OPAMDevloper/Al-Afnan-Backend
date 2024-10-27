@@ -103,5 +103,6 @@ connectDB(process.env.MONGODB_URI).then(() => {
 });
 
 app.listen(process.env.PORT, process.env.HOST, () => {
+
     console.log(`Server is listening on port ${process.env.PORT}`);
 });
