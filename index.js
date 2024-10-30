@@ -19,7 +19,8 @@ const corsOptions = {
         'http://localhost:3000',
         'https://ai-afnana-admin-1.onrender.com',
         'https://ai-afnana-admin-1.onrender.com/',
-
+        'http://localhost:5173/',
+        'http://localhost:5173',
         'http://localhost:3001'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -32,7 +33,7 @@ app.use(bodyParser.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-    console.log(req.path, req.method, corsOptions.origin);
+    console.log(req.path, req.method,);
     next();
 });
 
@@ -49,6 +50,8 @@ app.use('/admin/auth', admin_route);
 app.use('/admin/product', product_route);
 app.use('/admin/customer', customer_route);
 app.use('/admin/category', require('./admin_routes/category_route'));
+app.use('/admin/blog', require('./admin_routes/blogs_route'));
+
 
 connectDB(process.env.MONGODB_URI).then(() => {
     console.log('mongoose connected successfully');

@@ -32,19 +32,29 @@ const productSchema = new mongoose.Schema({
         type: [String],
         required: false,
     },
-    category: {
-        type: String,
-        trim: true,
+    category:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'categories'
     },
-    status: {
-        type : String,
-        enum : ['active','inactive'],
-        default : 'active'
 
+    status: {
+        type: String,
+        enum: ['active', 'inactive'],
+        default: 'active'
+
+    },
+    deletedAt: {
+        type: Date,
+        default: null
     }
 }, {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
+productSchema.pre(['find', 'findOne'], function () {
+    this.populate('category');
+});
+
 
 const Product = mongoose.model('Product', productSchema);
 

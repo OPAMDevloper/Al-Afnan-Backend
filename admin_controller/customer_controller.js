@@ -12,10 +12,7 @@ const CustomerController = {
             // get all customers expect trash
             // const customers = await User.find({ deletedAt: null });
             const query = {
-                // deletedAt: null,
-                // sort: {
-                //     createdAt: -1
-                // }
+                deletedAt: null
             }
             const options = configurePagination(req, query);
             console.log('optionsssss', options);

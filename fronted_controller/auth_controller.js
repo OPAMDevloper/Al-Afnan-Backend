@@ -16,10 +16,7 @@ const AuthController = {
             return res.status(400).json(new ErrorRespnse(400, 'All fields are required'));
         }
 
-        let imagePath = null;
-        if (req.files) {
-            imagePath = await saveImages(req.file);
-        }
+
 
         try {
             // Check if user already exists
@@ -39,7 +36,6 @@ const AuthController = {
                 name: req.body.name,
                 email: req.body.email,
                 password: bcrypt.hashSync(req.body.password, 10),
-                profileImage: imagePath
             });
 
             const user = await newUser.save();
@@ -55,7 +51,7 @@ const AuthController = {
             return res.status(400).json(new ErrorRespnse(400, 'All fields are required'))
         }
         try {
-            const user = await Admin.findOne({ email: req.body.email })
+            const user = await User.findOne({ email: req.body.email })
             if (!user) {
                 return res.status(400).json(new ErrorRespnse(400, 'user not exists'))
             }
