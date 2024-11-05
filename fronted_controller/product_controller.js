@@ -16,12 +16,22 @@ const ProductController = {
         }
     },
 
-    showAll : async (req, res) => {
+    showAll: async (req, res) => {
         try {
-            if(req.params.id === undefined) {
+            if (req.params.id === undefined) {
                 return res.status(400).json(new ErrorRespnse(400, 'Product id is required'));
             }
             const products = await Model.findOne({ _id: req.params.id });
+            res.status(200).json(new ApiResponse(200, 'Products fetched successfully', products));
+        } catch (error) {
+            res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
+        }
+    },
+
+    //get featured product
+    getFeatured: async (req, res) => {
+        try {
+            const products = await Model.find({ isFeatured: true });
             res.status(200).json(new ApiResponse(200, 'Products fetched successfully', products));
         } catch (error) {
             res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));

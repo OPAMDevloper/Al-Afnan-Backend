@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const api_config = require('../config/api');
 const ApiResponse = require('../response/ApiResponse');
 const ErrorRespnse = require('../response/error_response');
+const { sendOtp } = require('../helpers/mailhelper');
 const AuthController = {
 
     async create_user(req, res, next) {
@@ -38,9 +39,17 @@ const AuthController = {
                 password: bcrypt.hashSync(req.body.password, 10),
             });
 
+
+
             const user = await newUser.save();
+
+            const otp = Math.floor(100000 + Math.random() * 900000);
+
+            await sendOtp('email@gmail.com', otp, 'register');
+
             res.status(201).json(new ApiResponse(201, 'User has been created successfully', user));
         } catch (err) {
+            console.log('error on register', err);
             res.status(500).json(new ErrorRespnse(500, 'Something went wrong, please try again', err.message));
         }
     },

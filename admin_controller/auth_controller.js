@@ -12,8 +12,6 @@ const ApiResponse = require('../response/ApiResponse');
 const AuthController = {
 
     async create_user(req, res, next) {
-
-
         if (!req.body.password || !req.body.email || !req.body.name) {
             return res.status(400).json(new ErrorRespnse(400, 'All fields are required'))
         }
@@ -68,6 +66,17 @@ const AuthController = {
         } catch (err) {
             console.log(err)
             res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', err))
+        }
+    },
+
+
+    async getProfile(req, res, next) {
+        try {
+            if (req.user == null) return res.status(401).json(new ApiResponse(401, 'Please login to continue'))
+            const user = await Admin.findById(req.user.id);
+            res.status(200).json(new ApiResponse(200, 'User fetched successfully', user));
+        } catch (error) {
+            res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
         }
     }
 

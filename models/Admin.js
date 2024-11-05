@@ -5,12 +5,16 @@ const AdminSchmea = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true
     },
     email: {
         type: String,
         required: true,
         unique: true
+    },
+    roles: {
+        type: [String],
+
+        default: "admin"
     },
     password: {
         type: String,
@@ -19,6 +23,15 @@ const AdminSchmea = new mongoose.Schema({
     profileImage: {
         type: String,
         default: ""
+    },
+    deletedAt: {
+        type: Date,
+        default: null
+    },
+    status: {
+        type: String,
+        enum: ["active", "inactive", 'blocked'],
+        default: "active"
     }
 },
     { timestamps: true }

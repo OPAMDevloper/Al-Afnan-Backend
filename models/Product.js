@@ -44,6 +44,10 @@ const productSchema = new mongoose.Schema({
         default: 'active'
 
     },
+    isFeatured: {
+        type: Boolean,
+        default: false
+    },
     deletedAt: {
         type: Date,
         default: null

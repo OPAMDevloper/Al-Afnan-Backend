@@ -19,8 +19,6 @@ router.get('/all', authenticationVerifier, adminController.getAllProducts);
 router.get('/show/:id', authenticationVerifier, adminController.getProduct);
 
 
-
-
 router.post('/trash-many', authenticationVerifier, adminController.trashMany);
 router.post('/restore-many', authenticationVerifier, adminController.restoreMany);
 router.delete('/delete-many', authenticationVerifier, adminController.deleteMany);

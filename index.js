@@ -51,6 +51,7 @@ app.use('/admin/product', product_route);
 app.use('/admin/customer', customer_route);
 app.use('/admin/category', require('./admin_routes/category_route'));
 app.use('/admin/blog', require('./admin_routes/blogs_route'));
+app.use('/admin/admin', require('./admin_routes/admin_route')); 
 
 
 connectDB(process.env.MONGODB_URI).then(() => {
@@ -61,5 +62,5 @@ connectDB(process.env.MONGODB_URI).then(() => {
 
 app.listen(process.env.PORT || 10000, process.env.HOST, () => {
 
-    console.log(`Server is listening on port ${process.env.PORT} , host ${process.env.HOST} , origin ${corsOptions.origin}`);
+    console.log(`Server is listening on port ${process.env.PORT} , host ${process.env.HOST} `);
 });
