@@ -8,7 +8,11 @@ const ErrorRespnse = require('../response/error_response');
 // Add a new product
 exports.addProduct = async (req, res) => {
     try {
+
+        console.log(req.body);
+        console.log(req.files);
         if (req.files) {
+
             const savedPaths = saveImages(req.files.gallery);
 
             req.body.gallery = savedPaths;

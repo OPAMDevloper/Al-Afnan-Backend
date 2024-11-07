@@ -42,6 +42,7 @@ const fronted_route = require('./frontend_route/auth_route');
 app.use('/auth', fronted_route);
 app.use('/product', frontendProductRoute);
 app.use('/order', require('./frontend_route/orders_route'));
+app.use('/blog', require('./frontend_route/blog_route'));
 
 const product_route = require('./admin_routes/product_route');
 const admin_route = require('./admin_routes/auth_route');
@@ -51,7 +52,7 @@ app.use('/admin/product', product_route);
 app.use('/admin/customer', customer_route);
 app.use('/admin/category', require('./admin_routes/category_route'));
 app.use('/admin/blog', require('./admin_routes/blogs_route'));
-app.use('/admin/admin', require('./admin_routes/admin_route')); 
+app.use('/admin/admin', require('./admin_routes/admin_route'));
 
 
 connectDB(process.env.MONGODB_URI).then(() => {
