@@ -8,11 +8,13 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/create', upload.fields([
     { name: 'image', maxCount: 1 },
-    { name: 'gallery', maxCount: 10 }
+    { name: 'gallery', maxCount: 10 },
+    { name: 'imageModel', maxCount: 1 }
 ]), authenticationVerifier, adminController.addProduct);
 router.post('/update/:id', upload.fields([
     { name: 'image', maxCount: 1 },
-    { name: 'gallery', maxCount: 10 }
+    { name: 'gallery', maxCount: 10 },
+    { name: 'imageModel', maxCount: 1 }
 ]), authenticationVerifier, adminController.updateProduct);
 router.delete('/delete/:id', authenticationVerifier, adminController.deleteProduct);
 router.get('/all', authenticationVerifier, adminController.getAllProducts);

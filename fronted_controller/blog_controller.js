@@ -17,7 +17,6 @@ const getBlogs = async (req, res) => {
         res.status(200).json(new ApiResponse(200, 'Blogs fetched successfully', blog));
     } catch (error) {
         console.log('error in', error);
-
         res.status(500).json({ message: 'Error fetching orders', error });
     }
 };

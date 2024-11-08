@@ -24,7 +24,12 @@ const productSchema = new mongoose.Schema({
         type: Number,
         min: 0,
     },
+    imageModel: {
+        type: String,
+        required: false
+    },
     image: {
+
         type: String,
         required: false,
     },

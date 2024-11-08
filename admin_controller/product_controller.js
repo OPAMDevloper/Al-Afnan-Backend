@@ -9,18 +9,23 @@ const ErrorRespnse = require('../response/error_response');
 exports.addProduct = async (req, res) => {
     try {
 
-        console.log(req.body);
-        console.log(req.files);
-        if (req.files) {
+        console.log('req.body', req.files);
 
-            const savedPaths = saveImages(req.files.gallery);
+        // if (req.files) {
 
-            req.body.gallery = savedPaths;
-        }
+        //     const savedPaths = saveImages(req.files.gallery);
+
+        //     req.body.gallery = savedPaths;
+        // }
 
         if (req.files.image) {
             const image = saveImages(req.files.image);
             req.body.image = image[0];
+        }
+
+        if (req.files.imageModel) {
+            const imageModel = saveImages(req.files.imageModel);
+            req.body.imageModel = imageModel[0];
         }
 
 
@@ -30,6 +35,7 @@ exports.addProduct = async (req, res) => {
         // await product.save();
         res.status(201).json(new ApiResponse(201, 'Product has been created successfuly', data));
     } catch (error) {
+        console.log('error', error);
         res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
     }
 };
