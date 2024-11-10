@@ -1,5 +1,5 @@
 
-const Country = require('../models/country');
+const Country = require('../models/Country');
 const ApiResponse = require('../response/ApiResponse');
 const ErrorRespnse = require('../response/error_response');
 
