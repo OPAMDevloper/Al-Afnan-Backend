@@ -1,4 +1,5 @@
 // controllers/adminController.js
+const { default: mongoose } = require('mongoose');
 const { saveImages } = require('../helpers/fileUploadHelper');
 const { paginate, configurePagination } = require('../helpers/pagninateHelper');
 const Product = require('../models/Product');
@@ -9,7 +10,7 @@ const ErrorRespnse = require('../response/error_response');
 exports.addProduct = async (req, res) => {
     try {
 
-        console.log('req.body', req.files);
+        console.log('req.body', req.body);
 
         // if (req.files) {
 
@@ -179,4 +180,26 @@ exports.restoreMany = async (req, res, next) => {
 
 
 
+
+exports.getByCountry = async (req, res) => {
+    try {
+
+        if (req.params.id === undefined) {
+            return res.status(400).json(new ErrorRespnse(400, 'country id is required'));
+        }
+
+
+        // use pagination
+        const query = {
+            deletedAt: null,
+            country: new mongoose.Types.ObjectId(req.params.id)
+        }
+        const options = configurePagination(req, query);
+        const products = await paginate(Product, options);
+        res.status(200).json(new ApiResponse(200, 'Products fetched successfully', products));
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
+    }
+}
 

@@ -53,6 +53,8 @@ app.use('/admin/customer', customer_route);
 app.use('/admin/category', require('./admin_routes/category_route'));
 app.use('/admin/blog', require('./admin_routes/blogs_route'));
 app.use('/admin/admin', require('./admin_routes/admin_route'));
+// appl.use('/admin/order', require('./admin_routes/order_route'));
+app.use('/admin/country', require('./admin_routes/country_route'));
 
 
 connectDB(process.env.MONGODB_URI).then(() => {

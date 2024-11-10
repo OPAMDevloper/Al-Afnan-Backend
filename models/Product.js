@@ -42,6 +42,10 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'categories'
     },
+    country: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'country'
+    },
 
     status: {
         type: String,
