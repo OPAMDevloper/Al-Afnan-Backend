@@ -11,10 +11,10 @@ const ErrorRespnse = require('../response/error_response');
 exports.updateOrder = async (req, res) => {
     try {
         if (req.params.id === undefined) {
-            return res.status(400).json(new ErrorRespnse(400, 'Product id is required'));
+            return res.status(400).json(new ErrorRespnse(400, 'Order id is required'));
         }
-        const product = await Order.findById(req.params.id);
-        if (!product) return res.status(404).json({ message: 'Product not found' });
+        const order = await Order.findById(req.params.id);
+        if (!order) return res.status(404).json(new ErrorRespnse(404, 'Order not found'));
 
 
         const updatedProduct = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -25,17 +25,27 @@ exports.updateOrder = async (req, res) => {
 };
 
 // Get all products
+
+
 exports.getAllOrders = async (req, res) => {
     try {
         // const products = await Product.find();
         const query = {
             deletedAt: null
         }
+
+        // const orders = await Order.find(query).populate('userId');
         const options = configurePagination(req, query);
-        const Orders = await paginate(Order, options);
+        options.populate = [
+            { path: 'userId' }, // Populate userId
+            { path: 'products.productId' } // Populate productId inside the products array
+        ];
+
+        const orders = await paginate(Order, options);
         res.status(200).json(new ApiResponse(200, 'order fetched successfully', orders));
     } catch (error) {
-        // res.status(500).json({ error: error.message });
+        // res.status(500).json({ error: error });
+        console.log('error', error);
         res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
     }
 };

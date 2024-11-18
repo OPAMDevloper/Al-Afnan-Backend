@@ -43,11 +43,9 @@ const paginate = async (model, options) => {
     // Find the documents for the current page
     const query = model.find(filter).sort({ createdAt: -1 }).skip((page - 1) * count).limit(count);
 
-    // Apply populate if provided   
     if (populate) {
         query.populate(populate);
     }
-
     const documents = await query;
 
     const isNextPage = page < totalPages;

@@ -7,12 +7,13 @@ const {
     deleteOrder,
     updateOrderStatus
 } = require('../fronted_controller/orders_contrller');
+const { authenticationVerifier } = require('../middlewares/verifyToken');
 
 const router = express.Router();
 
-router.post('/', createOrder);
-router.get('/', getOrders);
-router.get('/:id', getOrderById);
+router.post('/create', authenticationVerifier, createOrder);
+router.get('/', authenticationVerifier, getOrders);
+router.get('/:id', authenticationVerifier, getOrderById);
 router.delete('/:id', deleteOrder);
 router.put('/:id/status', updateOrderStatus);
 

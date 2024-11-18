@@ -1,30 +1,51 @@
 // controllers/orderController.js
+const { configurePagination, paginate } = require('../helpers/pagninateHelper');
 const Order = require('../models/Order');
+const ApiResponse = require('../response/ApiResponse');
+const ErrorRespnse = require('../response/error_response');
 
 // Create an order
 const createOrder = async (req, res) => {
-    const { userId, products, amount, address } = req.body;
+
+
+    const { products, amount, address } = req.body;
+    console.log('req.body', req);
+    const userId = req.user.id;
 
     if (!userId || !Array.isArray(products) || products.length === 0 || !amount || !address) {
-        return res.status(400).json({ message: 'All fields are required.' });
+        return res.status(400).json(new ErrorRespnse(400, 'Invalid request parameters'));
     }
 
     try {
-        const newOrder = new Order({ userId, products, amount, address });
+        const newOrder = new Order({ userId, products, amount, address, status: 'pending' });
         const savedOrder = await newOrder.save();
-        res.status(201).json(savedOrder);
+        res.status(201).json(new ApiResponse(201, 'Order created successfully', savedOrder));
     } catch (error) {
-        res.status(500).json({ message: 'Error creating order', error });
+        console.log('error', error);
+        res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
     }
 };
 
 // Get all orders
 const getOrders = async (req, res) => {
     try {
-        const orders = await Order.find();
-        res.status(200).json(orders);
+        const userId = req.user.id;
+        const query = { deletedAt: null, userId: userId };
+        const options = configurePagination(req, query);
+
+        options.populate = [
+            { path: 'userId' }, // Populate userId
+            { path: 'products.productId' } // Populate productId inside the products array
+        ];
+        const order = await paginate(Order, options);
+
+
+
+
+        res.status(200).json(new ApiResponse(200, 'Orders fetched successfully', order));
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching orders', error });
+        console.log('error', error);
+        res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
     }
 };
 
@@ -35,11 +56,11 @@ const getOrderById = async (req, res) => {
     try {
         const order = await Order.findById(id);
         if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
+            return res.status(404).json(new ErrorRespnse(404, 'Order not found'));
         }
-        res.status(200).json(order);
+        res.status(200).json(new ApiResponse(200, 'Order fetched successfully', order));
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching order', error });
+        res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
     }
 };
 
