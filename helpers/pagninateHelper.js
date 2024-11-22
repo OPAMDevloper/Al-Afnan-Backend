@@ -84,6 +84,9 @@ const configurePagination = (req, defaultQuery = {}) => {
         ...defaultQuery,
         ...req.query.filter ? JSON.parse(req.query.filter) : {}
     };
+    if (req.query.category) {
+        filter.category = req.query.category;
+    }
 
     if (req.query.search) {
         filter.name = { $regex: req.query.search, $options: 'i' };

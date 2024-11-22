@@ -43,6 +43,7 @@ app.use('/auth', fronted_route);
 app.use('/product', frontendProductRoute);
 app.use('/order', require('./frontend_route/orders_route'));
 app.use('/blog', require('./frontend_route/blog_route'));
+app.use('/category', require('./frontend_route/category_route'))
 
 const product_route = require('./admin_routes/product_route');
 const admin_route = require('./admin_routes/auth_route');
@@ -55,7 +56,6 @@ app.use('/admin/blog', require('./admin_routes/blogs_route'));
 app.use('/admin/admin', require('./admin_routes/admin_route'));
 app.use('/admin/order', require('./admin_routes/order_route'));
 app.use('/admin/country', require('./admin_routes/country_route'));
-
 
 connectDB(process.env.MONGODB_URI).then(() => {
     console.log('mongoose connected successfully');
