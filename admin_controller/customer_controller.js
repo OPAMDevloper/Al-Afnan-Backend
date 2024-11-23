@@ -74,7 +74,6 @@ const CustomerController = {
             res.status(200).json(new ApiResponse(200, 'Customer updated successfully', customer));
         } catch (error) {
             console.log('error', error);
-
             res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
         }
     },

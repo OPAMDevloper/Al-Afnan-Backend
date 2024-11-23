@@ -56,10 +56,18 @@ exports.getOrderDetails = async (req, res) => {
         if (req.params.id === undefined) {
             return res.status(400).json(new ErrorRespnse(400, 'Product id is required'));
         }
-        const order = await Order.findById(req.params.id);
+        const populate = [
+            { path: 'userId' }, // Populate the 'userId' field
+            { path: 'products.productId' } // Populate the 'productId' inside the 'products' array
+        ];
+
+        // Fetch the order, ensuring the 'populate' function works as expected
+        const order = await Order.findById(req.params.id)
+            .populate(populate);
         if (!order) return res.status(404).json({ message: 'Product not found' });
         res.status(200).json(new ApiResponse(200, 'Product fetched successfully', order));
     } catch (error) {
+        console.log('error', error);
         res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
     }
 };

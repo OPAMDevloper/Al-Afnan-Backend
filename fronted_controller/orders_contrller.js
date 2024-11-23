@@ -50,11 +50,25 @@ const getOrders = async (req, res) => {
 };
 
 // Get a specific order by ID
+
+
 const getOrderById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const order = await Order.findById(id);
+        // populate = [
+        //     { path: 'userId' }, // Populate userId
+        //     { path: 'products.productId' } // Populate productId inside the products array
+        // ];
+        // const order = await Order.findById(id, { deletedAt: null }).populate(populate);
+        const populate = [
+            { path: 'userId' }, // Populate the 'userId' field
+            { path: 'products.productId' } // Populate the 'productId' inside the 'products' array
+        ];
+
+        // Fetch the order, ensuring the 'populate' function works as expected
+        const order = await Order.findById(id)
+            .populate(populate);
         if (!order) {
             return res.status(404).json(new ErrorRespnse(404, 'Order not found'));
         }
