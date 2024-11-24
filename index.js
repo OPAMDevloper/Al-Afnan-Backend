@@ -21,6 +21,8 @@ const corsOptions = {
         'https://ai-afnana-admin-1.onrender.com/',
         'http://localhost:5173/',
         'http://localhost:5173',
+        'http://localhost:5173/',
+        'http://localhost:5173',
         'http://localhost:3001'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
