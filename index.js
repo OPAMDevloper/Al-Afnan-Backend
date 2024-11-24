@@ -56,6 +56,7 @@ app.use('/admin/blog', require('./admin_routes/blogs_route'));
 app.use('/admin/admin', require('./admin_routes/admin_route'));
 app.use('/admin/order', require('./admin_routes/order_route'));
 app.use('/admin/country', require('./admin_routes/country_route'));
+app.use('/admin/analytics', require('./admin_routes/analytics_route'))
 
 connectDB(process.env.MONGODB_URI).then(() => {
     console.log('mongoose connected successfully');

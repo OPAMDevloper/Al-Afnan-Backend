@@ -190,7 +190,7 @@ const AuthController = {
     },
 
 
-    async resend_otp(req, res, next) {
+    async resend_otp(req, res, next) {  
         const { email } = req.body;
 
         if (!email) {
