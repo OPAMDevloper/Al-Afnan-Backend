@@ -5,6 +5,7 @@ const Order = require('../models/Order');
 const ApiResponse = require('../response/ApiResponse');
 const ErrorRespnse = require('../response/error_response');
 
+const sonicShippingService = require('../shippgin/shippingcontroller');
 
 
 // Update a product
@@ -31,11 +32,12 @@ exports.getAllOrders = async (req, res) => {
     try {
         // const products = await Product.find();
         const query = {
-            deletedAt: null
+            deletedAt: null,
+
         }
 
         // const orders = await Order.find(query).populate('userId');
-        const options = configurePagination(req, query);
+        const options = configurePagination(req, query, ['products.name', 'userId.name']);
         options.populate = [
             { path: 'userId' }, // Populate userId
             { path: 'products.productId' } // Populate productId inside the products array
@@ -69,5 +71,30 @@ exports.getOrderDetails = async (req, res) => {
     } catch (error) {
         console.log('error', error);
         res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
+    }
+};
+
+
+// Add new endpoint to track shipment
+exports.trackShipment = async (req, res) => {
+    const { trackingNumber } = req.params;
+
+    try {
+        const trackingInfo = await sonicShippingService.trackShipment(trackingNumber);
+        res.status(200).json(new ApiResponse(200, 'Tracking information retrieved successfully', trackingInfo));
+    } catch (error) {
+        res.status(500).json(new ErrorResponse(500, 'Error tracking shipment', error));
+    }
+};
+
+// Add new endpoint to get shipment status
+exports.getShipmentStatus = async (req, res) => {
+    const { trackingNumber } = req.params;
+
+    try {
+        const statusInfo = await sonicShippingService.getShipmentStatus(trackingNumber);
+        res.status(200).json(new ApiResponse(200, 'Status retrieved successfully', statusInfo));
+    } catch (error) {
+        res.status(500).json(new ErrorResponse(500, 'Error getting shipment status', error));
     }
 };

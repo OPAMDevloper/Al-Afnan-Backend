@@ -8,6 +8,10 @@ const ErrorRespnse = require('../response/error_response');
 const api = require('../config/api');
 const ApiResponse = require('../response/ApiResponse');
 
+const geoip = require('geoip-lite');
+const useragent = require('useragent');
+
+
 
 const AuthController = {
 
@@ -56,6 +60,33 @@ const AuthController = {
 
                 return res.status(400).json(new ErrorRespnse(400, 'Invalid credentials'))
             } else {
+
+
+
+                const ip = req.ip || req.body.ip; // Assuming IP is sent in the body if not available in the request object
+                const geo = geoip.lookup(ip);
+                const country = geo ? geo.country : 'Unknown'; // Default to 'Unknown' if country can't be determined
+
+                // Get browser and device details from user-agent
+                const agent = useragent.parse(req.headers['user-agent']);
+                const browser = agent.toAgent(); // Browser name/version
+                const device = agent.device.family || 'Unknown'; // Device name
+
+ 
+
+                user.ip = ip;
+                user.country = country;
+                user.browser = browser;
+                user.device = device;
+
+
+                console.log('user', user);
+
+
+
+
+
+                await user.save();
                 const accessToken = jwt.sign({
                     id: user._id,
                     email: user.email

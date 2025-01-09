@@ -103,6 +103,15 @@ exports.getBlogs = async (req, res) => {
     }
 };
 
+exports.getRecentBlogs = async (req, res) => {
+    try {
+        const blog = await Blogs.find().sort({ createdAt: -1 }).limit(5);
+        res.status(200).json(new ApiResponse(200, 'Blogs fetched successfully', blog));
+    } catch (error) {
+        res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
+    }
+}
+
 
 
 exports.trashMany = async (req, res, next) => {

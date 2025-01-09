@@ -61,7 +61,9 @@ const ProductController = {
             res.status(500).json(new ErrorRespnse(500, 'Something went wrong please try again', error));
 
         }
-    }
+    },
+
+
 }
 
 module.exports = ProductController

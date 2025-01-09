@@ -15,7 +15,7 @@ const OrderSchema = new mongoose.Schema({
             },
             quantity: {
                 type: Number,
-                default: 1  
+                default: 1
             }
         }
     ],
@@ -30,7 +30,10 @@ const OrderSchema = new mongoose.Schema({
     status: {
         type: String,
         default: "pending"
-    }
+    },
+
+    trackingNumber: String,
+    shippingStatus: String,
 },
     { timestamps: true }
 );

@@ -75,11 +75,10 @@ const paginate = async (model, options) => {
 //     };
 // };
 
-const configurePagination = (req, defaultQuery = {}) => {
+const configurePagination = (req, defaultQuery = {}, defaultSearchBy = []) => {
     const page = parseInt(req.query.page) || 1;
     const count = parseInt(req.query.count) || 10;
 
-    // Merge the defaultQuery with filters from request
     const filter = {
         ...defaultQuery,
         ...req.query.filter ? JSON.parse(req.query.filter) : {}
@@ -88,13 +87,18 @@ const configurePagination = (req, defaultQuery = {}) => {
         filter.category = req.query.category;
     }
 
-    if (req.query.search) {
+    if (req.query.search && defaultSearchBy.includes('name')) {
         filter.name = { $regex: req.query.search, $options: 'i' };
+    }
+
+    if (defaultSearchBy.length > 0) {
+        if (req.query.search && req.query.search !== '') {
+            filter.$or = defaultSearchBy.map(field => ({ [field]: { $regex: req.query.search, $options: 'i' } }));
+        }
     }
 
 
 
-    console.log('filter query', filter);
     return {
         page,
         count,

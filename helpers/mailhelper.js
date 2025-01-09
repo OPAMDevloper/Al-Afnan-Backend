@@ -19,6 +19,7 @@ async function createTransporter() {
             pass: process.env.PASSWORD,
         },
         logger: true, // Enable logging
+        secure: false,
         debug: true,
     });
 }
@@ -38,6 +39,7 @@ async function sendOtp(email, otp, purpose) {
         subject: subject,
         text: text,
         html: html,
+
     });
 
     console.log('Message sent: %s', info.messageId);

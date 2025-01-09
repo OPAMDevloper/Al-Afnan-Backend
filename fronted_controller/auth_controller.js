@@ -6,6 +6,9 @@ const jwt = require('jsonwebtoken');
 const api_config = require('../config/api');
 const ApiResponse = require('../response/ApiResponse');
 const ErrorRespnse = require('../response/error_response');
+const geoip = require('geoip-lite');
+const useragent = require('useragent');
+
 const { sendOtp } = require('../helpers/mailhelper');
 const AuthController = {
 
@@ -71,7 +74,7 @@ const AuthController = {
             });
 
             if (existingUser) {
-                return res.status(400).json(new ErrorRespnse(400, 'User already exists with this email or name'));
+                return res.status(400).json(new ErrorRespnse(400, 'User already exists with this email'));
             }
 
             // Create new user
@@ -82,18 +85,13 @@ const AuthController = {
             });
 
             const user = await newUser.save();
-
-            // Generate OTP
-            // const otp = Math.floor(100000 + Math.random() * 900000);
             const otp = Math.floor(1000 + Math.random() * 9000);
 
 
-            // Send OTP (example: sending to a dummy email, you should use the real email)
             await sendOtp(user.email, otp, 'register');
 
-            // Store OTP in temporary storage (in-memory, database, or Redis with expiry)
             user.otp = otp;
-            user.otpExpiry = Date.now() + 10 * 60 * 1000; // OTP expires in 10 minutes
+            user.otpExpiry = Date.now() + 10 * 60 * 1000;
             await user.save();
 
             res.status(201).json(new ApiResponse(201, 'User has been created successfully. OTP sent to email.', user));
@@ -174,10 +172,39 @@ const AuthController = {
                 return res.status(400).json(new ErrorRespnse(400, 'Email not verified. OTP sent for verification.'));
             }
 
+
+            // const ip = req.ip || req.body.ip; // Assuming IP is sent in the body if not available in the request object
+            // const geo = geoip.lookup(ip);
+            // const country = geo ? geo.country : 'Unknown'; // Default to 'Unknown' if country can't be determined
+
+            // // Get browser and device details from user-agent
+            // const agent = useragent.parse(req.headers['user-agent']);
+            // const browser = agent.toAgent(); // Browser name/version
+            // const device = agent.device.family || 'Unknown'; // Device name
+
+
+
+
+
+            // user.lastLogin = {
+            //     ip,
+            //     country,
+            //     browser,
+            //     device,
+            // };
+
+            // user.lastLogin = Date.now();
+            // user.browser = browser;
+            // user.device = device;
+            // user.country = country;
+            // user.ip = ip;
+            await user.save();
+
+
             // Generate JWT token
             const accessToken = jwt.sign({
                 id: user._id,
-                email: user.email
+                email: user.email,
             }, 'secret', { expiresIn: "1d" });
 
             const { password, otp, otpExpiry, ...data } = user._doc;
@@ -190,7 +217,7 @@ const AuthController = {
     },
 
 
-    async resend_otp(req, res, next) {  
+    async resend_otp(req, res, next) {
         const { email } = req.body;
 
         if (!email) {

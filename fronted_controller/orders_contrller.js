@@ -3,13 +3,14 @@ const { configurePagination, paginate } = require('../helpers/pagninateHelper');
 const Order = require('../models/Order');
 const ApiResponse = require('../response/ApiResponse');
 const ErrorRespnse = require('../response/error_response');
+const sonicShippingService = require('../shippgin/shippingcontroller');
+
 
 // Create an order
 const createOrder = async (req, res) => {
 
 
     const { products, amount, address } = req.body;
-    console.log('req.body', req);
     const userId = req.user.id;
 
     if (!userId || !Array.isArray(products) || products.length === 0 || !amount || !address) {
@@ -19,6 +20,27 @@ const createOrder = async (req, res) => {
     try {
         const newOrder = new Order({ userId, products, amount, address, status: 'pending' });
         const savedOrder = await newOrder.save();
+
+        const shipmentData = {
+            orderId: savedOrder._id.toString(),
+            amount: amount,
+            address: {
+                name: address.name,
+                fullAddress: address.streetAddress,
+                cityId: address.cityId,
+                phone: address.phone,
+                email: address.email
+            }
+        };
+
+        const shipmentResponse = await sonicShippingService.createShipment(shipmentData);
+
+        console.log('shipmentResponse', shipmentResponse);
+
+        savedOrder.trackingNumber = shipmentResponse.tracking_number;
+        savedOrder.shippingStatus = 'booked';
+        await savedOrder.save();
+
         res.status(201).json(new ApiResponse(201, 'Order created successfully', savedOrder));
     } catch (error) {
         console.log('error', error);
@@ -113,10 +135,33 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
+const trackShipment = async (req, res) => {
+    const { trackingNumber } = req.params;
+    try {
+        const trackingInfo = await sonicShippingService.trackShipment(trackingNumber);
+        res.status(200).json(new ApiResponse(200, 'Tracking information retrieved successfully', trackingInfo));
+    } catch (error) {
+        res.status(500).json(new ErrorResponse(500, 'Error tracking shipment', error));
+    }
+};
+
+const getShipmentStatus = async (req, res) => {
+    const { trackingNumber } = req.params;
+
+    try {
+        const statusInfo = await sonicShippingService.getShipmentStatus(trackingNumber);
+        res.status(200).json(new ApiResponse(200, 'Status retrieved successfully', statusInfo));
+    } catch (error) {
+        res.status(500).json(new ErrorResponse(500, 'Error getting shipment status', error));
+    }
+};
+
 module.exports = {
     createOrder,
     getOrders,
     getOrderById,
     deleteOrder,
-    updateOrderStatus
+    updateOrderStatus,
+    getShipmentStatus,
+    trackShipment,
 };

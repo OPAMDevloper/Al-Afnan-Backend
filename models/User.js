@@ -39,6 +39,19 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
+
+    ip: {
+        type: String,
+    },
+    country: {
+        type: String,
+    },
+    browser: {
+        type: String,
+    },
+    device: {
+        type: String,
+    },
 },
     { timestamps: true }
 );

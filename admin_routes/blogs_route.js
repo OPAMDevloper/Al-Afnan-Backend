@@ -18,6 +18,8 @@ router.delete('/delete/:id', authenticationVerifier, adminController.deleteBlog)
 router.get('/all', authenticationVerifier, adminController.getAllBlogs);
 router.get('/show/:id', authenticationVerifier, adminController.getBlogs);
 
+router.get('/recent', authenticationVerifier, adminController.getRecentBlogs);
+
 
 
 

@@ -5,7 +5,9 @@ const {
     getOrders,
     getOrderById,
     deleteOrder,
-    updateOrderStatus
+    updateOrderStatus,
+    getShipmentStatus,
+    trackShipment
 } = require('../fronted_controller/orders_contrller');
 const { authenticationVerifier } = require('../middlewares/verifyToken');
 
@@ -17,4 +19,7 @@ router.get('/:id', authenticationVerifier, getOrderById);
 router.delete('/:id', deleteOrder);
 router.put('/:id/status', updateOrderStatus);
 
+
+router.get('/shipments/:trackingNumber/track', trackShipment);
+router.get('/shipments/:trackingNumber/status', getShipmentStatus);
 module.exports = router;

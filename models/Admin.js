@@ -32,7 +32,20 @@ const AdminSchmea = new mongoose.Schema({
         type: String,
         enum: ["active", "inactive", 'blocked'],
         default: "active"
-    }
+    },
+
+    ip: {
+        type: String,
+    },
+    country: {
+        type: String,
+    },
+    browser: {
+        type: String,
+    },
+    device: {
+        type: String,
+    },
 },
     { timestamps: true }
 );
