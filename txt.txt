@@ -1,0 +1,37 @@
+JWT_SECRET=secret;
+STRIPE_KEY=jwtkey;
+
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/E-commerce
+CORS_ORIGIN=http://localhost:3039
+HOST=localhost
+
+
+
+
+#mail service
+<<<<<<< HEAD:.env
+# USERNAME=marielle.hansen20@ethereal.email
+# PASSWORD=hAr98mBJc2VQkDzR7T
+# MAIL_PORT=587
+# MAIL_HOST=smtp.ethereal.email
+# SECURE=STARTTLS
+USERNAME=alerts@alafnanperfume.com
+PASSWORD=Areeb@1212
+MAIL_PORT=443
+MAIL_HOST=imap.secureserver.net
+SECURE=STARTTLS
+
+
+SONIC_API_URL=http://sonic.pk/api
+TEST_SONIC_API_URL=http://app.sonic.pk 
+
+SONIC_API_KEY=your_api_key
+SONIC_PICKUP_ADDRESS_ID=454446
+=======
+USERNAME=marielle.hansen20@ethereal.email
+PASSWORD=hAr98mBJc2VQkDzR7T
+MAIL_PORT=587
+MAIL_HOST=smtp.ethereal.email
+SECURE=STARTTLS
+>>>>>>> a7cafc1b6fc6f1180c4a41b96648ae9dc0f22de3:.env.sameplefile

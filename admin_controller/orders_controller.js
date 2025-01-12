@@ -65,7 +65,17 @@ exports.getOrderDetails = async (req, res) => {
 
         // Fetch the order, ensuring the 'populate' function works as expected
         const order = await Order.findById(req.params.id)
-            .populate(populate);
+            .populate(populate).lean();
+
+        // call shipping service with tracking number
+        const trackingInfo = await sonicShippingService.getShipmentStatus(order.trackingNumber);
+
+        console.log('trackingInfo', trackingInfo);
+
+        // Update the order with the tracking information
+        order.trackingInfo = trackingInfo;
+
+        console.log('order details', order);
         if (!order) return res.status(404).json({ message: 'Product not found' });
         res.status(200).json(new ApiResponse(200, 'Product fetched successfully', order));
     } catch (error) {

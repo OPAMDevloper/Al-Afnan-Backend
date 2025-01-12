@@ -7,6 +7,6 @@ const { getCategory } = require('../fronted_controller/categroyController');
 
 const router = express.Router();
 
-router.get('/', authenticationVerifier, getCategory);
+router.get('/', getCategory);
 
 module.exports = router;

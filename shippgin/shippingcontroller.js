@@ -7,13 +7,32 @@ class SonicShippingService {
         this.apiKey = process.env.SONIC_API_KEY;
     }
 
+    async addPickupAddress(addressData) {
+        try {
+            console.log('address data', addressData)
+            const response = await axios.post(`https://sonic.pk/api/pickup_address/add`, addressData, {
+                headers: {
+                    'Authorization': 'RmhKRjgwbHlPNG1zbTdnV1ByemlsR1lYSzBCeXJCVkY5elQwajZRVU1RVVBnOVVkOW9SaUJLTEpmdGRp67594b0d0c700'
+                }
+            });
+
+            console.log('response.data', response.data);
+
+            return response.data;
+        } catch (error) {
+            console.error('Error adding pickup address:', error.message);
+            throw error;
+        }
+    }
+
+
     async createShipment(orderData) {
 
         console.log('order data---00', orderData)
         try {
             const response = await axios.post(`https://sonic.pk/api/shipment/book`, {
                 service_type_id: 1,
-                pickup_address_id: 454446,
+                pickup_address_id: orderData.pickupAddressId,
                 information_display: 1,
                 consignee_city_id: orderData.address.cityId,
                 consignee_name: orderData.address.name,
@@ -29,7 +48,7 @@ class SonicShippingService {
                 estimated_weight: 1.0,
                 shipping_mode_id: 1, // Rush delivery
                 amount: orderData.amount,
-                payment_mode_id: 0,
+                payment_mode_id: 1,
                 charges_mode_id: 4
             }, {
                 headers: {
@@ -50,6 +69,8 @@ class SonicShippingService {
 
     async trackShipment(trackingNumber) {
         try {
+
+            console.log('this api key', this.apiKey);
             const response = await axios.get(`${this.baseURL}/shipment/track`, {
                 params: {
                     tracking_number: trackingNumber,

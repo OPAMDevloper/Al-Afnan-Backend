@@ -21,16 +21,36 @@ const createOrder = async (req, res) => {
         const newOrder = new Order({ userId, products, amount, address, status: 'pending' });
         const savedOrder = await newOrder.save();
 
+        const pickupAddressData = {
+            person_of_contact: address.name,
+            phone_number: address.phone,
+            email_address: address.email,
+            address: address.fullAddress,
+            city_id: 202
+
+
+        };
+
+        const pickupResponse = await sonicShippingService.addPickupAddress(pickupAddressData);
+        if (!pickupResponse || pickupResponse.status !== 0) {
+            return res.status(400).json(new ErrorRespnse(400, 'Failed to add Pickup Address'));
+        }
+
+
+        const pickupAddressId = pickupResponse.id;
+
+
         const shipmentData = {
             orderId: savedOrder._id.toString(),
             amount: amount,
             address: {
                 name: address.name,
-                fullAddress: address.streetAddress,
-                cityId: address.cityId,
+                fullAddress: address.fullAddress,
+                cityId: 104,
                 phone: address.phone,
                 email: address.email
-            }
+            },
+            pickupAddressId
         };
 
         const shipmentResponse = await sonicShippingService.createShipment(shipmentData);
